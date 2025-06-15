@@ -1,0 +1,22 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.schemas.service import ServiceCreate, ServiceResponse
+from app.crud import service as service_crud
+
+router = APIRouter()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@router.post("/", response_model=ServiceResponse)
+def create_service(service: ServiceCreate, db: Session = Depends(get_db)):
+    return service_crud.create_service(db, service)
+
+@router.get("/", response_model=list[ServiceResponse])
+def read_services(db: Session = Depends(get_db)):
+    return service_crud.get_services(db)
