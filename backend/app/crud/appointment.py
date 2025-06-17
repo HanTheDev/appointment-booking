@@ -3,7 +3,7 @@ from app.models.appointment import Appointment
 from app.schemas.appointment import AppointmentCreate
 from fastapi import HTTPException
 from app.models.user import User
-from app.models.user import Service
+from app.models.service import Service
 
 def create_appointment(db: Session, appointment: AppointmentCreate):
     user = db.query(User).filter(User.id == appointment.user_id).first()
