@@ -1,8 +1,19 @@
 from sqlalchemy.orm import Session
 from app.models.appointment import Appointment
 from app.schemas.appointment import AppointmentCreate
+from fastapi import HTTPException
+from app.models.user import User
+from app.models.user import Service
 
 def create_appointment(db: Session, appointment: AppointmentCreate):
+    user = db.query(User).filter(User.id == appointment.user_id).first()
+    service = db.query(Service).filter(Service.id == appointment.service_id).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
     db_appointment = Appointment(
         user_id=appointment.user_id,
         service_id=appointment.service_id,
