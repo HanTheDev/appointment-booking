@@ -13,7 +13,7 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/", response_model=ServiceResponse)
+@router.post("/create", response_model=ServiceResponse)
 def create_service(service: ServiceCreate, db: Session = Depends(get_db)):
     return service_crud.create_service(db, service)
 
