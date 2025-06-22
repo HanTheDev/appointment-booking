@@ -13,7 +13,7 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/", response_model=AppointmentResponse)
+@router.post("/create", response_model=AppointmentResponse)
 def create_appointment(appointment: AppointmentCreate, db: Session = Depends(get_db)):
     return appointment_crud.create_appointment(db, appointment)
 
