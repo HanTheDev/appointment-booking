@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
+from app.schemas.user import UserResponse
+from app.schemas.service import ServiceResponse
 
 class AppointmentBase(BaseModel):
     user_id: int
@@ -11,6 +13,10 @@ class AppointmentCreate(AppointmentBase):
 
 class AppointmentResponse(AppointmentBase):
     id: int
+    appointment_time: datetime
+    created_at: datetime
+    user: UserResponse
+    service: ServiceResponse
 
     class Config:
         orm_mode = True
