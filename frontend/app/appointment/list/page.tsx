@@ -1,0 +1,60 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+type Appointment = {
+  id: number;
+  appointment_time: string;
+  created_at: string;
+  user: {
+    id: number;
+    name: string;
+  };
+  service: {
+    id: number;
+    description: string;
+  };
+};
+
+export default function AppointmentListPage() {
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/appointments")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Appointments data: ", data)
+        setAppointments(data)
+      });
+  }, []);
+
+  return (
+    <div className="p-6 space-y-4">
+      <h1 className="text-2xl font-bold">Appointments</h1>
+
+      {appointments.length === 0 ? (
+        <p>No appointments found.</p>
+      ) : (
+        <ul className="space-y-4">
+          {appointments.map((appt) => (
+            <li key={appt.id} className="border p-4 rounded">
+              <p>
+                <strong>User:</strong> {appt.user.name}
+              </p>
+              <p>
+                <strong>Service:</strong> {appt.service.description}
+              </p>
+              <p>
+                <strong>Time:</strong>{" "}
+                {new Date(appt.appointment_time).toLocaleString()}
+              </p>
+              <p className="text-gray-500 text-sm">
+                Created at: {new Date(appt.created_at).toLocaleString()}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
