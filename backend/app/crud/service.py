@@ -26,3 +26,9 @@ def update_service(db: Session, service_id: int, updated_service: ServiceCreate)
     db.commit()
     db.refresh(service)
     return service
+
+def delete_service(db: Session, service_id: int):
+    service = get_service_by_id(db, service_id)
+    db.delete(service)
+    db.commit()
+    return service
