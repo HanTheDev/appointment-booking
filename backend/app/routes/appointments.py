@@ -20,3 +20,7 @@ def create_appointment(appointment: AppointmentCreate, db: Session = Depends(get
 @router.get("/", response_model=list[AppointmentResponse])
 def read_appointments(db: Session = Depends(get_db)):
     return appointment_crud.get_appointments(db)
+
+@router.get("/{appointment_id}", response_model=AppointmentResponse)
+def get_appointment_by_id(appointment_id: int, db: Session = Depends(get_db)):
+    return appointment_crud.get_appointment_by_id(db, appointment_id)

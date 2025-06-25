@@ -32,3 +32,9 @@ def get_appointments(db: Session, skip: int = 0, limit: int = 10):
         .limit(limit)
         .all()
     )
+
+def get_appointment_by_id(db: Session, appointment_id: int):
+    appointment = db.query(Appointment).filter(Appointment.id == appointment_id).first()
+    if appointment is None:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    return appointment
