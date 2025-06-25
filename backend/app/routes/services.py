@@ -24,3 +24,7 @@ def read_services(db: Session = Depends(get_db)):
 @router.get("/{service_id}", response_model=ServiceResponse)
 def get_service_by_id(service_id: int, db: Session = Depends(get_db)):
     return service_crud.get_service_by_id(db, service_id)
+
+@router.put("/{service_id}", response_model=ServiceResponse)
+def update_service(service_id: int, updated_service: ServiceCreate, db: Session = Depends(get_db)):
+    return service_crud.update_service(db, service_id, updated_service)

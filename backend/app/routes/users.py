@@ -25,10 +25,10 @@ def read_users(db: Session = Depends(get_db)):
 def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
     return user_crud.get_user_by_id(db, user_id)
 
-@router.delete("/{user_id}", response_model=UserResponse)
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    return user_crud.delete_user(db, user_id)
-
 @router.put("/{user_id}", response_model=UserResponse)
 def update_user(user_id: int, updated_user: UserCreate, db: Session = Depends(get_db)):
     return user_crud.update_user(db, user_id, updated_user)
+
+@router.delete("/{user_id}", response_model=UserResponse)
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    return user_crud.delete_user(db, user_id)

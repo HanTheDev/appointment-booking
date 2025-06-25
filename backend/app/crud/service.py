@@ -18,3 +18,11 @@ def get_service_by_id(db: Session, service_id: int):
     if service is None:
         raise HTTPException(status_code=404, detail="Service not found")
     return service
+
+def update_service(db: Session, service_id: int, updated_service: ServiceCreate):
+    service = get_service_by_id(db, service_id)
+    service.name = updated_service.name
+    service.description = updated_service.description
+    db.commit()
+    db.refresh(service)
+    return service
