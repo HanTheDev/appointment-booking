@@ -38,3 +38,9 @@ def get_appointment_by_id(db: Session, appointment_id: int):
     if appointment is None:
         raise HTTPException(status_code=404, detail="Appointment not found")
     return appointment
+
+def delete_appointment(db: Session, appointment_id: int):
+    appointment = get_appointment_by_id(db, appointment_id)
+    db.delete(appointment)
+    db.commit()
+    return {"msg": "Appointment deleted successfully"}  

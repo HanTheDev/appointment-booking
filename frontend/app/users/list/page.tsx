@@ -48,7 +48,7 @@ export default function ListUsersPage() {
           <li key={user.id} className="border p-2">
             <p className="font-semibold">{user.name}</p>
             <p className="text-gray-600">{user.email}</p>
-            <button className="mr-2 cursor-pointer" onClick={() => deleteUser(user.id)}>Delete</button>
+            <button className="mr-2 cursor-pointer text-red-400" onClick={() => deleteUser(user.id)}>Delete</button>
             <Link className="ml-2" href={`/users/edit/${user.id}`}>Edit</Link>
           </li>
         ))}

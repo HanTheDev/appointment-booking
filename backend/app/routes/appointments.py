@@ -24,3 +24,7 @@ def read_appointments(db: Session = Depends(get_db)):
 @router.get("/{appointment_id}", response_model=AppointmentResponse)
 def get_appointment_by_id(appointment_id: int, db: Session = Depends(get_db)):
     return appointment_crud.get_appointment_by_id(db, appointment_id)
+
+@router.delete("/{appointment_id}")
+def delete_appointment(appointment_id: int, db: Session = Depends(get_db)):
+    return appointment_crud.delete_appointment(db, appointment_id)

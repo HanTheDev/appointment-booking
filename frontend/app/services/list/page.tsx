@@ -51,7 +51,7 @@ export default function ListServicesPage() {
             <p className="font-semibold">{service.name}</p>
             <p className="text-gray-600">{service.description}</p>
             <button
-              className="mr-2 cursor-pointer"
+              className="mr-2 cursor-pointer text-red-400"
               onClick={() => deleteService(service.id)}
             >
               Delete
