@@ -17,10 +17,10 @@ export default function HomePage() {
         <Link href="/services/list" className="bg-green-600 text-white px-4 py-3 rounded text-center">
           View Services
         </Link>
-        <Link href="/appointments/list" className="bg-purple-600 text-white px-4 py-3 rounded text-center">
+        <Link href="/appointment/list" className="bg-purple-600 text-white px-4 py-3 rounded text-center">
           View Appointments
         </Link>
-        <Link href="/appointments/add" className="bg-orange-600 text-white px-4 py-3 rounded text-center">
+        <Link href="/appointment/add" className="bg-orange-600 text-white px-4 py-3 rounded text-center">
           Add Appointment
         </Link>
       </div>

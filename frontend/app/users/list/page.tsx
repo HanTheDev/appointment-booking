@@ -28,7 +28,6 @@ export default function ListUsersPage() {
           method: "DELETE",
         });
         if (res.ok) {
-          console.log("user deleted successfully");
           fetchUsers()
         } else {
           console.error("failed to delete user", res.statusText);

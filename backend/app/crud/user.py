@@ -13,10 +13,21 @@ def create_user(db: Session, user: UserCreate):
 def get_users(db: Session, skip: int = 0, limit: int = 10):
     return db.query(User).offset(skip).limit(limit).all()
 
-def delete_user(db: Session, user_id):
+def delete_user(db: Session, user_id: int):
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     db.delete(db_user)
     db.commit()
+    return db_user
+
+def update_user(db: Session, user_id: int, updated_user: UserCreate):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    # update the field
+    db_user.name = updated_user.name
+    db_user.email = updated_user.email
+    db.commit()
+    db.refresh(db_user)
     return db_user
