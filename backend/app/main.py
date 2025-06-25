@@ -6,11 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Appointment Booking API")
 
-app.include_router(users.router, prefix="/users", tags=["Users"])
-app.include_router(services.router, prefix="/services", tags=["Services"])
-app.include_router(appointments.router, prefix="/appointments", tags=["Appointments"])
-Base.metadata.create_all(bind=engine)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],  # Your frontend origin
@@ -18,6 +13,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(users.router, prefix="/users", tags=["Users"])
+app.include_router(services.router, prefix="/services", tags=["Services"])
+app.include_router(appointments.router, prefix="/appointments", tags=["Appointments"])
+Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def read_root():

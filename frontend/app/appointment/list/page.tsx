@@ -12,6 +12,7 @@ type Appointment = {
   };
   service: {
     id: number;
+    name: string;
     description: string;
   };
 };
@@ -20,7 +21,7 @@ export default function AppointmentListPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/appointments")
+    fetch("http://localhost:8000/appointments/")
       .then((res) => res.json())
       .then((data) => {
         console.log("Appointments data: ", data)
@@ -42,7 +43,10 @@ export default function AppointmentListPage() {
                 <strong>User:</strong> {appt.user.name}
               </p>
               <p>
-                <strong>Service:</strong> {appt.service.description}
+                <strong>Service:</strong> {appt.service.name}
+              </p>
+              <p>
+                <strong>Service details: </strong> {appt.service.description}
               </p>
               <p>
                 <strong>Time:</strong>{" "}

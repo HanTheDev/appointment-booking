@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.models.appointment import Appointment
 from app.schemas.appointment import AppointmentCreate
 from fastapi import HTTPException
@@ -25,4 +25,10 @@ def create_appointment(db: Session, appointment: AppointmentCreate):
     return db_appointment
 
 def get_appointments(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(Appointment).offset(skip).limit(limit).all()
+    return (
+        db.query(Appointment)
+        .options(joinedload(Appointment.user), joinedload(Appointment.service))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
