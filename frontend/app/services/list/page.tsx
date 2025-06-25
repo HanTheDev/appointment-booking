@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 type Service = {
@@ -7,7 +8,7 @@ type Service = {
   description: string
 }
 
-export default function ListUsersPage() {
+export default function ListServicesPage() {
   const [services, setServices] = useState<Service[]>([])
 
   useEffect(() => {
@@ -28,6 +29,8 @@ export default function ListUsersPage() {
           <li key={service.id} className="border p-2">
             <p className="font-semibold">{service.name}</p>
             <p className="text-gray-600">{service.description}</p>
+            <button className="mr-2 cursor-pointer">Delete</button>
+            <Link className="ml-2" href={`/services/edit/${service.id}`}>Edit</Link>
           </li>
         ))}
       </ul>

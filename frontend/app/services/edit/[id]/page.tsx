@@ -6,40 +6,40 @@ import { useParams, useRouter } from "next/navigation";
 export default function EditUserPage() {
   const { id } = useParams() as { id: string };
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [description, setDescription] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await fetch(`http://localhost:8000/users/${id}`);
+      const res = await fetch(`http://localhost:8000/services/${id}`);
       const data = await res.json();
       setName(data.name);
-      setEmail(data.email);
+      setDescription(data.description);
     };
     fetchUser();
   }, [id]);
 
-  const updateUser = async () => {
-    if (!name || !email) {
+  const updateService = async () => {
+    if (!name || !description) {
       alert("Both name and email are required.");
       return;
     }
-    const res = await fetch(`http://localhost:8000/users/${id}`, {
+    const res = await fetch(`http://localhost:8000/services/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email }),
+      body: JSON.stringify({ name, description }),
     });
     if (res.ok) {
-      alert("User updated!");
-      router.push("/users/list");
+      alert("Services updated!");
+      router.push("/services/list");
     } else {
-      alert("Failed to update user");
+      alert("Failed to update service");
     }
   };
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Update User</h1>
+      <h1 className="text-2xl font-bold mb-4">Update Service</h1>
       <div className="space-y-2">
         <input
           value={name}
@@ -48,16 +48,16 @@ export default function EditUserPage() {
           className="border p-2 w-full"
         />
         <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           placeholder="Email"
           className="border p-2 w-full"
         />
         <button
-          onClick={updateUser}
+          onClick={updateService}
           className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
         >
-          Update User
+          Update Service
         </button>
       </div>
     </div>
