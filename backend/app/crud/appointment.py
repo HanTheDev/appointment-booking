@@ -4,6 +4,7 @@ from app.schemas.appointment import AppointmentCreate
 from fastapi import HTTPException
 from app.models.user import User
 from app.models.service import Service
+from sqlalchemy import func
 
 def create_appointment(db: Session, appointment: AppointmentCreate):
     user = db.query(User).filter(User.id == appointment.user_id).first()
@@ -24,10 +25,17 @@ def create_appointment(db: Session, appointment: AppointmentCreate):
     db.refresh(db_appointment)
     return db_appointment
 
-def get_appointments(db: Session, skip: int = 0, limit: int = 10):
+def get_appointments(db: Session, skip: int = 0, limit: int = 10, user_id: int | None = None, 
+                     service_id: int | None = None, date: str | None = None):
+    query = db.query(Appointment)
+    if user_id:
+        query = query.filter(Appointment.user_id == user_id)
+    if service_id:
+        query = query.filter(Appointment.service_id == service_id)
+    if date:
+        query = query.filter(func.date(Appointment.appointment_time) == date)
     return (
-        db.query(Appointment)
-        .options(joinedload(Appointment.user), joinedload(Appointment.service))
+        query.options(joinedload(Appointment.user), joinedload(Appointment.service))
         .offset(skip)
         .limit(limit)
         .all()

@@ -18,8 +18,9 @@ def create_appointment(appointment: AppointmentCreate, db: Session = Depends(get
     return appointment_crud.create_appointment(db, appointment)
 
 @router.get("/", response_model=list[AppointmentResponse])
-def read_appointments(db: Session = Depends(get_db)):
-    return appointment_crud.get_appointments(db)
+def read_appointments(user_id: int | None = None, service_id: int | None = None, 
+                      date: str | None = None, db: Session = Depends(get_db)):
+    return appointment_crud.get_appointments(db, user_id=user_id, service_id=service_id, date=date)
 
 @router.get("/{appointment_id}", response_model=AppointmentResponse)
 def get_appointment_by_id(appointment_id: int, db: Session = Depends(get_db)):
