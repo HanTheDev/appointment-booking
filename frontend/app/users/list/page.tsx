@@ -13,7 +13,7 @@ export default function ListUsersPage() {
 
   // for pagination
   const [skip, setSkip] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
 
   const fetchUsers = async () => {
     const res = await fetch(
@@ -24,14 +24,14 @@ export default function ListUsersPage() {
   };
 
   const incrementSkip = () => {
-    setSkip((prevSkip) => prevSkip + 10);
+    setSkip((prevSkip) => prevSkip + limit);
   };
 
   const decrementSkip = () => {
-    setSkip((prevSkip) => prevSkip - 10);
+    setSkip((prevSkip) => prevSkip - limit);
   };
-  
-  const usersLength = users.length
+
+  const usersLength = users.length;
 
   useEffect(() => {
     fetchUsers();
@@ -59,6 +59,16 @@ export default function ListUsersPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">User List</h1>
+
+      <select
+        className="mb-4 bg-blue-400 rounded"
+        onChange={(e) => setLimit(Number(e.target.value))}
+      >
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+      </select>
+
       <ul className="space-y-2">
         {users.map((user) => (
           <li key={user.id} className="border p-2">

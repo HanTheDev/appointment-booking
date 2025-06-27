@@ -18,7 +18,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return user_crud.create_user(db, user)
 
 @router.get("/", response_model=list[UserResponse])
-def read_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+def read_users(skip: int = 0, limit: int = 5, db: Session = Depends(get_db)):
     return user_crud.get_users(db, skip, limit)
 
 @router.get("/{user_id}", response_model=UserResponse)
