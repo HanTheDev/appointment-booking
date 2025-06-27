@@ -11,15 +11,31 @@ type User = {
 export default function ListUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
 
+  // for pagination
+  const [skip, setSkip] = useState(0);
+  const [limit, setLimit] = useState(10);
+
   const fetchUsers = async () => {
-    const res = await fetch("http://localhost:8000/users");
+    const res = await fetch(
+      `http://localhost:8000/users?skip=${skip}&limit=${limit}`
+    );
     const data = await res.json();
     setUsers(data);
   };
 
+  const incrementSkip = () => {
+    setSkip((prevSkip) => prevSkip + 10);
+  };
+
+  const decrementSkip = () => {
+    setSkip((prevSkip) => prevSkip - 10);
+  };
+  
+  const usersLength = users.length
+
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [skip, limit]);
 
   const deleteUser = async (id: number) => {
     const userConfirmed = confirm("Are you sure you want delete this user?");
@@ -29,7 +45,7 @@ export default function ListUsersPage() {
           method: "DELETE",
         });
         if (res.ok) {
-          fetchUsers()
+          fetchUsers();
         } else {
           console.error("failed to delete user", res.statusText);
         }
@@ -48,11 +64,36 @@ export default function ListUsersPage() {
           <li key={user.id} className="border p-2">
             <p className="font-semibold">{user.name}</p>
             <p className="text-gray-600">{user.email}</p>
-            <button className="mr-2 cursor-pointer text-red-400" onClick={() => deleteUser(user.id)}>Delete</button>
-            <Link className="ml-2" href={`/users/edit/${user.id}`}>Edit</Link>
+            <button
+              className="mr-2 cursor-pointer text-red-400"
+              onClick={() => deleteUser(user.id)}
+            >
+              Delete
+            </button>
+            <Link className="ml-2" href={`/users/edit/${user.id}`}>
+              Edit
+            </Link>
           </li>
         ))}
       </ul>
+
+      {skip > 0 && (
+        <button
+          className="bg-blue-600 text-white px-4 py-2 mt-4 mb-4 mr-2 rounded cursor-pointer"
+          onClick={decrementSkip}
+        >
+          Prev
+        </button>
+      )}
+
+      {usersLength === limit && (
+        <button
+          className="bg-blue-600 text-white px-4 py-2 mt-4 mb-4 ml-2 rounded cursor-pointer"
+          onClick={incrementSkip}
+        >
+          Next
+        </button>
+      )}
     </div>
   );
 }
