@@ -18,8 +18,8 @@ def create_service(service: ServiceCreate, db: Session = Depends(get_db)):
     return service_crud.create_service(db, service)
 
 @router.get("/", response_model=list[ServiceResponse])
-def read_services(db: Session = Depends(get_db)):
-    return service_crud.get_services(db)
+def read_services(skip: int = 0, limit: int = 5, db: Session = Depends(get_db)):
+    return service_crud.get_services(db, skip, limit)
 
 @router.get("/{service_id}", response_model=ServiceResponse)
 def get_service_by_id(service_id: int, db: Session = Depends(get_db)):

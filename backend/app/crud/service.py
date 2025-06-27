@@ -10,7 +10,7 @@ def create_service(db: Session, service: ServiceCreate):
     db.refresh(db_service)
     return db_service
 
-def get_services(db: Session, skip: int = 0, limit: int = 10):
+def get_services(db: Session, skip: int = 0, limit: int = 5):
     return db.query(Service).offset(skip).limit(limit).all()
 
 def get_service_by_id(db: Session, service_id: int):
