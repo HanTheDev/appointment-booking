@@ -10,13 +10,14 @@ export default function AddAppointmentPage() {
   const [services, setServices] = useState([]);
 
   useEffect(() => {
+    // limit = 1000 to bypass the pagination feature
     // fetch users
-    fetch("http://localhost:8000/users")
+    fetch("http://localhost:8000/users?limit=1000")
       .then((res) => res.json())
       .then((data) => setUsers(data));
 
     // fetch services
-    fetch("http://localhost:8000/services")
+    fetch("http://localhost:8000/services?limit=1000")
       .then((res) => res.json())
       .then((data) => setServices(data));
   }, []);
@@ -57,7 +58,7 @@ export default function AddAppointmentPage() {
       <select
         value={userId ?? ""}
         onChange={(e) => setUserId(Number(e.target.value))}
-        className="border p-2 w-full"
+        className="border p-2 w-full bg-blue-500 rounded"
       >
         <option value="">Select User</option>
         {users.map((user: any) => (
@@ -71,7 +72,7 @@ export default function AddAppointmentPage() {
       <select
         value={serviceId ?? ""}
         onChange={(e) => setServiceId(Number(e.target.value))}
-        className="border p-2 w-full"
+        className="border p-2 w-full bg-orange-500 rounded"
       >
         <option value="">Select Service</option>
         {services.map((service: any) => (
@@ -86,7 +87,7 @@ export default function AddAppointmentPage() {
         type="datetime-local"
         value={appointmentTime}
         onChange={(e) => setAppointmentTime(e.target.value)}
-        className="border p-2 w-full"
+        className="border p-2 w-full bg-green-500 rounded"
       />
 
       {/* Submit Button */}
