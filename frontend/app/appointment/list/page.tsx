@@ -40,17 +40,38 @@ export default function AppointmentListPage() {
     date: "",
   });
 
-  const fetchAppointments = async () => {
-    fetch("http://localhost:8000/appointments/")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Appointments data: ", data);
-        setAppointments(data);
-      });
+  const [skip, setSkip] = useState(0);
+  const [limit, setLimit] = useState(5);
+  const appointmentLength = appointments.length;
+
+  const loadAppointments = async () => {
+    const query = new URLSearchParams();
+
+    if (filters.userId) query.append("user_id", filters.userId);
+    if (filters.serviceId) query.append("service_id", filters.serviceId);
+    if (filters.date) query.append("date", filters.date);
+
+    query.append("skip", skip.toString());
+    query.append("limit", limit.toString());
+
+    const res = await fetch(
+      `http://localhost:8000/appointments/?${query.toString()}`
+    );
+    const data = await res.json();
+    setAppointments(data);
   };
+
+  const incrementSkip = () => {
+    setSkip((prevSkip) => prevSkip + limit);
+  };
+
+  const decrementSkip = () => {
+    setSkip((prevSkip) => prevSkip - limit);
+  };
+
   useEffect(() => {
-    fetchAppointments();
-  }, []);
+    loadAppointments();
+  }, [skip, limit]);
 
   const deleteAppointment = async (id: number) => {
     const appointmentConfirmed = confirm(
@@ -62,7 +83,7 @@ export default function AppointmentListPage() {
           method: "DELETE",
         });
         if (res.ok) {
-          fetchAppointments();
+          loadAppointments();
         } else {
           console.error("failed to delete appointment", res.statusText);
         }
@@ -103,7 +124,7 @@ export default function AppointmentListPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          fetchAppointments(); // or your filter function
+          loadAppointments();
         }}
         className="space-y-4"
       >
@@ -144,20 +165,9 @@ export default function AppointmentListPage() {
 
         <button
           type="button"
-          className="bg-blue-500 text-white px-4 py-2 mr-2 rounded"
+          className="bg-blue-500 text-white px-4 py-2 mr-2 rounded cursor-pointer"
           onClick={() => {
-            const query = new URLSearchParams();
-
-            if (filters.userId) query.append("user_id", filters.userId);
-            if (filters.serviceId)
-              query.append("service_id", filters.serviceId);
-            if (filters.date) query.append("date", filters.date);
-
-            fetch(`http://localhost:8000/appointments/?${query.toString()}`)
-              .then((res) => res.json())
-              .then((data) => {
-                setAppointments(data);
-              });
+            loadAppointments();
           }}
         >
           Filter
@@ -165,10 +175,11 @@ export default function AppointmentListPage() {
 
         <button
           type="button"
-          className="bg-red-500 text-white px-4 py-2 ml-2 rounded"
+          className="bg-red-500 text-white px-4 py-2 ml-2 rounded cursor-pointer"
           onClick={() => {
             setFilters({ userId: "", serviceId: "", date: "" });
-            fetchAppointments();
+            setSkip(0);
+            loadAppointments();
           }}
         >
           Reset
@@ -206,6 +217,24 @@ export default function AppointmentListPage() {
             </li>
           ))}
         </ul>
+      )}
+
+      {skip > 0 && (
+        <button
+          className="bg-blue-600 text-white px-4 py-2 mt-4 mb-4 mr-2 rounded cursor-pointer"
+          onClick={decrementSkip}
+        >
+          Prev
+        </button>
+      )}
+
+      {appointmentLength === limit && (
+        <button
+          className="bg-blue-600 text-white px-4 py-2 mt-4 mb-4 ml-2 rounded cursor-pointer"
+          onClick={incrementSkip}
+        >
+          Next
+        </button>
       )}
     </div>
   );
