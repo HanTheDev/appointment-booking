@@ -1,3 +1,7 @@
+# This file defines the /login endpoint.
+# It handles user login by validating credentials and returning a JWT access token.
+# The token can be used for accessing protected routes.
+
 from fastapi import APIRouter, Depends, HTTPException
 from app.schemas.login import LoginRequest
 from app.database import SessionLocal

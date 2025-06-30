@@ -1,3 +1,7 @@
+# This file handles JWT token creation.
+# It generates access tokens containing user information (usually email as 'sub').
+# These tokens are returned after login and used to access protected routes.
+
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 

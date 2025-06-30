@@ -1,3 +1,7 @@
+# This file contains the core authentication logic.
+# It handles looking up a user by email and verifying their password.
+# It is used by the /login route and can be reused elsewhere if needed.
+
 from app.models.user import User
 from app.utils import security
 from fastapi import HTTPException

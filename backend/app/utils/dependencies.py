@@ -1,3 +1,9 @@
+# This file defines reusable dependencies for protected routes.
+# It includes:
+# - `get_db`: to access the database
+# - `get_current_user`: to extract and validate the user from the JWT token
+# This is used to restrict access to routes based on login and (optionally) user role.
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
