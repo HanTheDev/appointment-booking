@@ -22,9 +22,3 @@ def login_user(credentials: LoginRequest, db: Session = Depends(get_db)):
         "access_token": access_token,
         "token_type": "bearer"
     }
-    # return {
-    #     "message": "Login successful",
-    #     "user_id": user.id,
-    #     "email": user.email,
-    #     "name": user.name,
-    # }
