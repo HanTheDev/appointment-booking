@@ -3,6 +3,7 @@ from app.schemas.login import LoginRequest
 from app.database import SessionLocal
 from sqlalchemy.orm import Session
 from app.services import auth as auth_service
+from app.utils.token import create_access_token
 
 router = APIRouter()
 
@@ -16,9 +17,14 @@ def get_db():
 @router.post("/login")
 def login_user(credentials: LoginRequest, db: Session = Depends(get_db)):
     user = auth_service.authenticate_user(db, credentials.email, credentials.password)
+    access_token = create_access_token(data={"sub": user.email})
     return {
-        "message": "Login successful",
-        "user_id": user.id,
-        "email": user.email,
-        "name": user.name,
+        "access_token": access_token,
+        "token_type": "bearer"
     }
+    # return {
+    #     "message": "Login successful",
+    #     "user_id": user.id,
+    #     "email": user.email,
+    #     "name": user.name,
+    # }

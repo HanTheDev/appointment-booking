@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routes import users, services, appointments
+from app.routes import users, services, appointments, auth
 from app.database import Base, engine
 from app.models import user, service, appointment
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,6 +17,7 @@ app.add_middleware(
 app.include_router(users.router, prefix="/users", tags=["Users"])
 app.include_router(services.router, prefix="/services", tags=["Services"])
 app.include_router(appointments.router, prefix="/appointments", tags=["Appointments"])
+app.include_router(auth.router)
 Base.metadata.create_all(bind=engine)
 
 @app.get("/")
