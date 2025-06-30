@@ -6,7 +6,12 @@ from app.utils import security
 
 def create_user(db: Session, user: UserCreate):
     hashed_password = security.hash_password(user.password)
-    db_user = User(name=user.name, email=user.email, hashed_password=hashed_password)
+    db_user = User(
+        name=user.name, 
+        email=user.email, 
+        hashed_password=hashed_password,
+        role="user"
+        )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

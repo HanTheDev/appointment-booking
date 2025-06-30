@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from app.schemas.user import UserCreate, UserResponse
 from app.crud import user as user_crud
 from app.database import SessionLocal
+from app.models.user import User
+from app.utils.dependencies import get_current_user
 
 router = APIRouter()
 
@@ -18,7 +20,10 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return user_crud.create_user(db, user)
 
 @router.get("/", response_model=list[UserResponse])
-def read_users(skip: int = 0, limit: int = 5, db: Session = Depends(get_db)):
+def read_users(current_user: User = Depends(get_current_user), 
+               skip: int = 0, limit: int = 5, db: Session = Depends(get_db)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin only")
     return user_crud.get_users(db, skip, limit)
 
 @router.get("/{user_id}", response_model=UserResponse)
