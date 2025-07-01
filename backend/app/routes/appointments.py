@@ -38,8 +38,17 @@ def read_appointments(skip: int = 0, limit: int = 5, user_id: int | None = None,
                                              user_id=user_id, service_id=service_id, date=date)
 
 @router.get("/{appointment_id}", response_model=AppointmentResponse)
-def get_appointment_by_id(appointment_id: int, db: Session = Depends(get_db)):
-    return appointment_crud.get_appointment_by_id(db, appointment_id)
+def get_appointment_by_id(
+    appointment_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    appointment = appointment_crud.get_appointment_by_id(db, appointment_id)
+
+    if current_user.role != "admin" and appointment.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to view this appointment")
+
+    return appointment
 
 @router.delete("/{appointment_id}")
 def delete_appointment(appointment_id: int, db: Session = Depends(get_db)):

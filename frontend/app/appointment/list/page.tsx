@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import Form from "next/form";
+import Link from "next/link";
 
 type Appointment = {
   id: number;
@@ -251,9 +251,6 @@ export default function AppointmentListPage() {
                 <strong>Service:</strong> {appt.service.name}
               </p>
               <p>
-                <strong>Service details: </strong> {appt.service.description}
-              </p>
-              <p>
                 <strong>Time:</strong>{" "}
                 {new Date(appt.appointment_time).toLocaleString()}
               </p>
@@ -266,6 +263,12 @@ export default function AppointmentListPage() {
               >
                 Delete
               </button>
+              <Link
+                href={`/appointment/view/${appt.id}`}
+                className="text-white"
+              >
+                View
+              </Link>
             </li>
           ))}
         </ul>
