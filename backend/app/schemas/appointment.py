@@ -2,14 +2,14 @@ from pydantic import BaseModel
 from datetime import datetime
 from app.schemas.user import UserResponse
 from app.schemas.service import ServiceResponse
+from typing import Optional
 
 class AppointmentBase(BaseModel):
-    user_id: int
     service_id: int
     appointment_time: datetime
 
 class AppointmentCreate(AppointmentBase):
-    pass
+    user_id: Optional[int] = None
 
 class AppointmentResponse(AppointmentBase):
     id: int

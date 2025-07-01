@@ -6,17 +6,14 @@ from app.models.user import User
 from app.models.service import Service
 from sqlalchemy import func
 
-def create_appointment(db: Session, appointment: AppointmentCreate):
-    user = db.query(User).filter(User.id == appointment.user_id).first()
+def create_appointment(db: Session, appointment: AppointmentCreate, user_id: int):
     service = db.query(Service).filter(Service.id == appointment.service_id).first()
 
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
     if not service:
         raise HTTPException(status_code=404, detail="Service not found")
     
     db_appointment = Appointment(
-        user_id=appointment.user_id,
+        user_id=user_id,
         service_id=appointment.service_id,
         appointment_time=appointment.appointment_time
     )
