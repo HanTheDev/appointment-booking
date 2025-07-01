@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import Form from "next/form";
 
 type Appointment = {
@@ -22,6 +23,7 @@ type User = {
   id: number;
   name: string;
   email: string;
+  role: string;
 };
 
 type Service = {
@@ -43,19 +45,49 @@ export default function AppointmentListPage() {
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(5);
   const appointmentLength = appointments.length;
+  const [role, setRole] = useState("user");
+  const [userId, setUserId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+
+    const decoded: any = jwtDecode(token);
+    fetch(`http://localhost:8000/users/email/${decoded.sub}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setUserId(data.id);
+        setRole(data.role);
+      });
+  }, []);
 
   const loadAppointments = async () => {
     const query = new URLSearchParams();
 
-    if (filters.userId) query.append("user_id", filters.userId);
+    if (filters.userId) {
+      query.append("user_id", filters.userId);
+    } else if (role !== "admin" && userId) {
+      query.append("user_id", userId.toString());
+    }
+
     if (filters.serviceId) query.append("service_id", filters.serviceId);
     if (filters.date) query.append("date", filters.date);
 
     query.append("skip", skip.toString());
     query.append("limit", limit.toString());
 
+    const token = localStorage.getItem("token");
+
     const res = await fetch(
-      `http://localhost:8000/appointments/?${query.toString()}`
+      `http://localhost:8000/appointments/?${query.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     const data = await res.json();
     setAppointments(data);
@@ -94,16 +126,29 @@ export default function AppointmentListPage() {
   };
 
   const fetchUsers = async () => {
-    fetch("http://localhost:8000/users/")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Users data: ", data);
-        setUsers(data);
-      });
+    const token = localStorage.getItem("token");
+
+    const res = await fetch("http://localhost:8000/users?limit=1000", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+    console.log("Users data:", data);
+
+    if (Array.isArray(data)) {
+      setUsers(data);
+    } else {
+      console.error("Expected an array of users, got:", data);
+      setUsers([]);
+    }
   };
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (role === "admin") {
+      fetchUsers();
+    }
+  }, [role]);
 
   const fetchServices = async () => {
     fetch("http://localhost:8000/services/")
@@ -128,18 +173,23 @@ export default function AppointmentListPage() {
         }}
         className="space-y-4"
       >
-        <select
-          name="user"
-          value={filters.userId}
-          onChange={(e) => setFilters({ ...filters, userId: e.target.value })}
-        >
-          <option value="">-- All Users --</option>
-          {users.map((user) => (
-            <option key={user.id} value={user.id}>
-              {user.name}
-            </option>
-          ))}
-        </select>
+        {role === "admin" && (
+          <select
+            name="user"
+            value={filters.userId}
+            onChange={(e) => setFilters({ ...filters, userId: e.target.value })}
+            className="border p-2 bg-blue-500 rounded mr-2"
+          >
+            <option value="">-- All Users --</option>
+            {users
+              .filter((user) => user.role !== "admin")
+              .map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.name}
+                </option>
+              ))}
+          </select>
+        )}
 
         <select
           name="service"
@@ -147,6 +197,7 @@ export default function AppointmentListPage() {
           onChange={(e) =>
             setFilters({ ...filters, serviceId: e.target.value })
           }
+          className="border p-2 bg-orange-500 rounded ml-2 mr-2"
         >
           <option value="">-- All Services --</option>
           {services.map((service) => (
@@ -161,6 +212,7 @@ export default function AppointmentListPage() {
           name="date"
           value={filters.date}
           onChange={(e) => setFilters({ ...filters, date: e.target.value })}
+          className="border p-2 bg-green-500 rounded ml-2 mr-2"
         />
 
         <button

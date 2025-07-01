@@ -118,20 +118,6 @@ export default function AddAppointmentPage() {
         </select>
       )}
 
-      {/* User Select */}
-      {/* <select
-        value={userId ?? ""}
-        onChange={(e) => setUserId(Number(e.target.value))}
-        className="border p-2 w-full bg-blue-500 rounded"
-      >
-        <option value="">Select User</option>
-        {users.map((user: any) => (
-          <option key={user.id} value={user.id}>
-            {user.name}
-          </option>
-        ))}
-      </select> */}
-
       {/* Service Select */}
       <select
         value={serviceId ?? ""}
