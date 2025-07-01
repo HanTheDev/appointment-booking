@@ -33,7 +33,7 @@ def read_appointments(skip: int = 0, limit: int = 5, user_id: int | None = None,
                       service_id: int | None = None, date: str | None = None, 
                       current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Admin only")
+        user_id = current_user.id
     return appointment_crud.get_appointments(db, skip=skip, limit=limit, 
                                              user_id=user_id, service_id=service_id, date=date)
 
