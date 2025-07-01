@@ -37,3 +37,10 @@ def update_user(user_id: int, updated_user: UserCreate, db: Session = Depends(ge
 @router.delete("/{user_id}", response_model=UserResponse)
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     return user_crud.delete_user(db, user_id)
+
+@router.get("/email/{email}", response_model=UserResponse)
+def get_user_by_email(email: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
