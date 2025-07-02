@@ -51,7 +51,21 @@ def get_appointment_by_id(
     return appointment
 
 @router.delete("/{appointment_id}")
-def delete_appointment(appointment_id: int, db: Session = Depends(get_db)):
+def delete_appointment(
+    appointment_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # First, fetch the appointment to validate access
+    appointment = appointment_crud.get_appointment_by_id(db, appointment_id)
+
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+
+    # Admins can delete anything; users can only delete their own
+    if current_user.role != "admin" and appointment.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this appointment")
+
     return appointment_crud.delete_appointment(db, appointment_id)
 
 @router.put("/{appointment_id}", response_model=AppointmentResponse)

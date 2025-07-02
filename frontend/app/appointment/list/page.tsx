@@ -111,8 +111,12 @@ export default function AppointmentListPage() {
     );
     if (appointmentConfirmed) {
       try {
+        const token = localStorage.getItem("token");
         const res = await fetch(`http://localhost:8000/appointments/${id}`, {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         if (res.ok) {
           loadAppointments();
