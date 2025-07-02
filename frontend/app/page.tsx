@@ -43,6 +43,12 @@ export default function HomePage() {
         >
           Add Appointment
         </Link>
+        <Link
+          href="/login"
+          className="bg-yellow-600 text-white px-4 py-3 rounded text-center"
+        >
+          Login
+        </Link>
         <button
           onClick={logout}
           className="bg-red-600 text-white px-4 py-2 rounded cursor-pointer"
