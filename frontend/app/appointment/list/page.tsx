@@ -265,9 +265,15 @@ export default function AppointmentListPage() {
               </button>
               <Link
                 href={`/appointment/view/${appt.id}`}
-                className="text-white"
+                className="text-white mr-2"
               >
                 View
+              </Link>
+              <Link
+                href={`/appointment/edit/${appt.id}`}
+                className="text-white"
+              >
+                Edit
               </Link>
             </li>
           ))}
