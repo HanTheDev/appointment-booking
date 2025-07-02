@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 from app.models.appointment import Appointment
-from app.schemas.appointment import AppointmentCreate
+from app.schemas.appointment import AppointmentCreate, AppointmentUpdate
 from fastapi import HTTPException
 from app.models.user import User
 from app.models.service import Service
@@ -48,4 +48,23 @@ def delete_appointment(db: Session, appointment_id: int):
     appointment = get_appointment_by_id(db, appointment_id)
     db.delete(appointment)
     db.commit()
-    return {"msg": "Appointment deleted successfully"}  
+    return {"msg": "Appointment deleted successfully"}
+
+def update_appointment(db: Session, appointment_id: int, appointment_data: AppointmentUpdate):
+    appointment = db.query(Appointment).filter(Appointment.id == appointment_id).first()
+    
+    if appointment is None:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+
+    if appointment_data.service_id is not None:
+        service = db.query(Service).filter(Service.id == appointment_data.service_id).first()
+        if not service:
+            raise HTTPException(status_code=404, detail="Service not found")
+        appointment.service_id = appointment_data.service_id
+
+    if appointment_data.appointment_time is not None:
+        appointment.appointment_time = appointment_data.appointment_time
+
+    db.commit()
+    db.refresh(appointment)
+    return appointment

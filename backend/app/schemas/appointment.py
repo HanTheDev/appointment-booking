@@ -11,6 +11,10 @@ class AppointmentBase(BaseModel):
 class AppointmentCreate(AppointmentBase):
     user_id: Optional[int] = None
 
+class AppointmentUpdate(BaseModel):
+    service_id: Optional[int] = None
+    appointment_time: Optional[datetime] = None
+
 class AppointmentResponse(AppointmentBase):
     id: int
     appointment_time: datetime

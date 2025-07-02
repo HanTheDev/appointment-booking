@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
-from app.schemas.appointment import AppointmentCreate, AppointmentResponse
+from app.schemas.appointment import AppointmentCreate, AppointmentResponse, AppointmentUpdate
 from app.crud import appointment as appointment_crud
 from app.utils.dependencies import get_current_user
 from app.models.user import User
@@ -53,3 +53,18 @@ def get_appointment_by_id(
 @router.delete("/{appointment_id}")
 def delete_appointment(appointment_id: int, db: Session = Depends(get_db)):
     return appointment_crud.delete_appointment(db, appointment_id)
+
+@router.put("/{appointment_id}", response_model=AppointmentResponse)
+def update_appointment_by_id(
+    appointment_id: int,
+    appointment_data: AppointmentUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    appointment = appointment_crud.get_appointment_by_id(db, appointment_id)
+
+    # Admins can edit any, users can only edit their own
+    if current_user.role != "admin" and appointment.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this appointment")
+
+    return appointment_crud.update_appointment(db, appointment_id, appointment_data)
