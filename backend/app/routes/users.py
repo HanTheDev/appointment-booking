@@ -5,6 +5,7 @@ from app.crud import user as user_crud
 from app.database import SessionLocal
 from app.models.user import User
 from app.utils.dependencies import get_current_user
+from app.schemas.password import PasswordUpdate
 
 router = APIRouter()
 
@@ -44,3 +45,19 @@ def get_user_by_email(email: str, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+@router.put("/{user_id}/change-password")
+def change_password(user_id: int, password_data: PasswordUpdate, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # 🔐 Verify current password
+    from app.utils.security import verify_password, hash_password
+    if not verify_password(password_data.current_password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Current password is incorrect")
+
+    # 💾 Update to new password
+    user.hashed_password = hash_password(password_data.new_password)
+    db.commit()
+    return {"msg": "Password updated successfully"}
