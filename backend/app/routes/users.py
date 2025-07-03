@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.schemas.user import UserCreate, UserResponse
+from app.schemas.user import UserCreate, UserResponse, UserUpdate
 from app.crud import user as user_crud
 from app.database import SessionLocal
 from app.models.user import User
@@ -31,7 +31,7 @@ def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
     return user_crud.get_user_by_id(db, user_id)
 
 @router.put("/{user_id}", response_model=UserResponse)
-def update_user(user_id: int, updated_user: UserCreate, db: Session = Depends(get_db)):
+def update_user(user_id: int, updated_user: UserUpdate, db: Session = Depends(get_db)):
     return user_crud.update_user(db, user_id, updated_user)
 
 @router.delete("/{user_id}", response_model=UserResponse)

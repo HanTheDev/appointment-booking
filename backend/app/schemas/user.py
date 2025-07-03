@@ -8,6 +8,11 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
+class UserUpdate(UserBase):
+    # reuses name and email on UserBase
+    # avoid sending passwords
+    pass
+
 class UserResponse(UserBase):
     id: int
     role: str
