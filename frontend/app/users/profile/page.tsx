@@ -15,6 +15,55 @@ export default function UserProfilePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const router = useRouter();
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!user || !user.id) {
+      alert("User data not loaded.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(
+        `http://localhost:8000/users/${user.id}/change-password`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            current_password: currentPassword,
+            new_password: newPassword,
+          }),
+        }
+      );
+
+      if (res.ok) {
+        alert("Password changed successfully!");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      } else {
+        const errorData = await res.json();
+        alert("Failed to change password: " + errorData.detail);
+      }
+    } catch (err) {
+      console.error("Error changing password:", err);
+      alert("Something went wrong.");
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -120,6 +169,60 @@ export default function UserProfilePage() {
       >
         Delete Account
       </button>
+      <h2 className="text-xl font-semibold mt-8 mb-4">Change Password</h2>
+      <form
+        onSubmit={handleChangePassword}
+        className="space-y-4 border-t pt-4 mt-4"
+      >
+        <div>
+          <label htmlFor="currentPassword" className="block font-medium">
+            Current Password:
+          </label>
+          <input
+            type="password"
+            id="currentPassword"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="border p-2 rounded w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="newPassword" className="block font-medium">
+            New Password:
+          </label>
+          <input
+            type="password"
+            id="newPassword"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="border p-2 rounded w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="confirmPassword" className="block font-medium">
+            Confirm Password:
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="border p-2 rounded w-full"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+        >
+          Change Password
+        </button>
+      </form>
     </div>
   );
 }
