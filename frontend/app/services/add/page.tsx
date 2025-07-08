@@ -99,7 +99,6 @@ export default function AddServicePage() {
     );
   }
 
-  // ✅ Admin can see the form
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Add Service</h1>
