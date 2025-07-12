@@ -5,6 +5,11 @@ from fastapi import HTTPException
 from app.utils import security
 
 def create_user(db: Session, user: UserCreate):
+    # Check if email already exists
+    existing_user = db.query(User).filter(User.email == user.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
     hashed_password = security.hash_password(user.password)
     db_user = User(
         name=user.name, 
