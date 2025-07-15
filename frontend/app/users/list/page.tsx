@@ -52,6 +52,7 @@ export default function ListUsersPage() {
   };
 
   useEffect(() => {
+    // check if the role is admin or not
     if (role === "admin") {
       fetchUsers();
     }
